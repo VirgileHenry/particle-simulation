@@ -19,7 +19,7 @@ class Particle {
     Vector<double, D> velocity; // velocity of that particle, in 3 dimension space
     Vector<double, D> force; // force of that particle, in 3 dimension space
     double mass; // mass of that particle. 
-    // todo : catgégorie ? type ?
+    short unsigned int type;
 
 
     public:
@@ -29,12 +29,12 @@ class Particle {
     Particle(std::function<Vector<double, D>()> positionGenerator) {
         this->id = Particle::last_id++;
         this->position = positionGenerator();
-        this->velocity = Vector<double, 3>();
-        this->force = Vector<double, 3>();
+        this->velocity = Vector<double, D>();
+        this->force = Vector<double, D>();
         this->mass = 1.0; // todo : change this in the future
     }
     /// @brief Creates a particle with all sets params.
-    Particle(Vector<double, 3> pos, Vector<double, 3> vel, Vector<double, 3> force, double mass) {
+    Particle(Vector<double, D> pos, Vector<double, D> vel, Vector<double, D> force, double mass) {
         this->id = Particle::last_id++;
         this->position = pos;
         this->velocity = vel;

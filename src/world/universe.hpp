@@ -1,4 +1,7 @@
+#pragma once
+
 #include <array>
+#include <list>
 #include <random>
 #include <algorithm>
 #include <unordered_map>
@@ -6,6 +9,7 @@
 #include "particle.hpp"
 #include "universe_chunk.hpp"
 #include "interactions/interactor.hpp"
+#include "../visualizer/visulizer.hpp"
 
 /// @brief Universe class.
 /// @tparam D the number of dimensions of the universe.
@@ -13,15 +17,24 @@
 template<unsigned int D, unsigned int N, typename T>
 class Universe {
     private:
+    // interactors and visulizers
     T interactor;
+    std::list<Visulizer<Universe<D, N, T>>*> registered_visulizer;
+
     const double ld; // longueur caractéristique
     const double rcut; // rayon de coupe
     std::array<Particle<D>, N> particles;
     std::unordered_map<Vector<unsigned int, D>, UniverseChunk<D>> chunks;
 
+    // getters and setters
+    public:
+    std::array<Particle<D>, N> getParticles(){
+        return this->particles;
+    }
+
     public:
     void step(double deltaTime);
-    void display();
+    void registerVisulizer(Visulizer<Universe<D, N, T>> *visulizer);
 
     private:
     void updateParticleForces(double deltaTime);    
@@ -86,6 +99,10 @@ void Universe<D, N, T>::step(double deltaTime) {
     this->updateParticleVel(deltaTime);
     // update particles positions
     this->updateParticlePos(deltaTime);
+    // trigger all visulizers
+    for(Visulizer<Universe<D, N, T>> *visulizer: this->registered_visulizer) {
+        visulizer->draw(this);
+    }
 }
 
 template<unsigned int D, unsigned int N, typename T>
@@ -99,7 +116,9 @@ void Universe<D, N, T>::updateParticleForces(double deltaTime) {
     // temporary to make work the interactor
     for(unsigned int i = 0; i < N; i++) {
         for(unsigned int j = 0; j < i; j++) {
+            // this is the force that j particle exerce on i particule.
             Vector<double, D> force = this->interactor.computeInteractionForce(this->particles[i], this->particles[j]);
+            // maybe don't do this if forces are not symmetrical ?
             this->particles[i].addForce(force);
             this->particles[j].addForce(-force);
         }
@@ -122,3 +141,7 @@ void Universe<D, N, T>::updateParticlePos(double deltaTime) {
     }
 }
 
+template<unsigned int D, unsigned int N, typename T>
+void Universe<D, N, T>::registerVisulizer(Visulizer<Universe<D, N, T>> *visulizer) {
+    this->registered_visulizer.push_back(visulizer);
+}
