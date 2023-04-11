@@ -14,4 +14,4 @@ add_executable(main "src/main.cpp")
 
 # link the sdl2
 find_package(SDL2 REQUIRED)
-target_link_libraries(main PRIVATE SDL2::SDL2-static)
+target_link_libraries(main PRIVATE ${SDL2_LIBRARIES})

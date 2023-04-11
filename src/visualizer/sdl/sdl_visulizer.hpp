@@ -23,7 +23,7 @@ class SDLVisulizer : public Visulizer<Universe> {
         // create the window with title, x, y, width, height, flags.
         // here we set the flags so the window grab the focus on creation, and is resizable.
         this->window = SDL_CreateWindow("SDL universe visulizer", 100, 100, 800, 450, SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_RESIZABLE);
-        this->renderer = SDL_CreateRenderer(this->window, -1, 0);    
+        this->renderer = SDL_CreateRenderer(this->window, -1, 0);
 
         // create another thread that handle events
 
@@ -45,9 +45,11 @@ class SDLVisulizer : public Visulizer<Universe> {
 
     public: 
     void draw(Universe* universe) const override {
-        for(auto it = universe->getParticles().begin(); it != universe->getParticles().end(); it++){
-            SDL_RenderDrawPoint(this->renderer, it->getPosition()[0], it->getPosition()[1]);
+        SDL_SetRenderDrawColor(this->renderer, 255, 255, 255, 255);
+        for(auto particule : universe->getParticles()){
+            SDL_RenderDrawPoint(this->renderer, particule.getPosition()[0] * 800, particule.getPosition()[1] * 450);
         }
+        SDL_RenderPresent(this->renderer);
 
     }
 };

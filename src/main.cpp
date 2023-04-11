@@ -4,11 +4,11 @@
 
 int main() {
     // create a universe, a visulizer, and register it
-    Universe<2, 5000, NoInteractions<2>> universe(NoInteractions<2>(), 1.0, 0.5);
-    SDLVisulizer<Universe<2, 5000, NoInteractions<2>>> visulizer = SDLVisulizer<Universe<2, 5000, NoInteractions<2>>>();
+    Universe<2, 1000, NoInteractions<2>> universe(NoInteractions<2>(), 1.0, 0.5);
+    SDLVisulizer<Universe<2, 1000, NoInteractions<2>>> visulizer = SDLVisulizer<Universe<2, 1000, NoInteractions<2>>>();
     universe.registerVisulizer(&visulizer);
 
-    for(unsigned int i = 0; i < 100; i++) {
+    for(unsigned int i = 0; i < 5000; i++) {
         universe.step(0.01);
     }
 
