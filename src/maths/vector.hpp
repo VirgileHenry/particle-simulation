@@ -44,25 +44,25 @@ class Vector {
     }
 
     void operator+=(const Vector<T, D>& v) {
-        for(unsigned int i = 0; i < D-1; i++) {
+        for(unsigned int i = 0; i < D; i++) {
             this->values[i] += v[i];
         }
     }
 
     void operator-=(const Vector<T, D>& v) {
-        for(unsigned int i = 0; i < D-1; i++) {
+        for(unsigned int i = 0; i < D; i++) {
             this->values[i] -= v[i];
         }
     }
 
     void operator*=(const T& s) {
-        for(unsigned int i = 0; i < D-1; i++) {
+        for(unsigned int i = 0; i < D; i++) {
             this->values[i] *= s;
         }
     }
 
     void operator/=(const T& s) {
-        for(unsigned int i = 0; i < D-1; i++) {
+        for(unsigned int i = 0; i < D; i++) {
             this->values[i] /= s;
         }
     }
@@ -82,7 +82,7 @@ class Vector {
     ///         The result is not rooted, as we are not sure sqrt is defined for T.
     /// @return The sum of the squarred elements of values.
     T sq_magnitude() {
-        T sum;
+        T sum = {};
         for(auto elem: this->values) {
             sum += elem * elem;
         }
@@ -121,8 +121,9 @@ std::ostream& operator<<(std::ostream& os, const Vector<T, D>& vec) {
 template<typename T, unsigned int D>
 Vector<T, D> operator-(const Vector<T, D>& v) {
     T values [D];
-    unsigned int i = 0;
-    std::generate_n(values, D, [&] { return -v[i++]; });
+    for(unsigned int i = 0; i < D; i++) {
+        values[i] = - v[i];
+    }
     return Vector<T, D>(values);
 }
 
@@ -135,8 +136,9 @@ Vector<T, D> operator-(const Vector<T, D>& v) {
 template<typename T, unsigned int D>
 Vector<T, D> operator+(const Vector<T, D>& v1, const Vector<T, D>& v2) {
     T values [D];
-    unsigned int i = 0;
-    std::generate_n(values, D, [&] { return v1[i++] + v2[i++]; });
+    for(unsigned int i = 0; i < D; i++) {
+        values[i] = v1[i] + v2[i];
+    }
     return Vector<T, D>(values);
 }
 
@@ -149,8 +151,9 @@ Vector<T, D> operator+(const Vector<T, D>& v1, const Vector<T, D>& v2) {
 template<typename T, unsigned int D>
 Vector<T, D> operator-(const Vector<T, D>& v1, const Vector<T, D>& v2) {
     T values [D];
-    unsigned int i = 0;
-    std::generate_n(values, D, [&] { return v1[i++] - v2[i++]; });
+    for(unsigned int i = 0; i < D; i++) {
+        values[i] = v1[i] - v2[i];
+    }
     return Vector<T, D>(values);
 }
 
@@ -163,8 +166,9 @@ Vector<T, D> operator-(const Vector<T, D>& v1, const Vector<T, D>& v2) {
 template<typename T, unsigned int D>
 Vector<T, D> operator*(const Vector<T, D>& v, const T& s) {
     T values [D];
-    unsigned int i = 0;
-    std::generate_n(values, D, [&] { return v[i++] * s; });
+    for(unsigned int i = 0; i < D; i++) {
+        values[i] = v[i] * s;
+    }
     return Vector<T, D>(values);
 }
 
@@ -177,8 +181,9 @@ Vector<T, D> operator*(const Vector<T, D>& v, const T& s) {
 template<typename T, unsigned int D>
 Vector<T, D> operator/(const Vector<T, D>& v, const T& s) {
     T values [D];
-    unsigned int i = 0;
-    std::generate_n(values, D, [&] { return v[i++] / s; });
+    for(unsigned int i = 0; i < D; i++) {
+        values[i] = v[i] / s;
+    }
     return Vector<T, D>(values);
 }
 
