@@ -70,7 +70,7 @@ class Universe {
         std::default_random_engine rnd{std::random_device{}()};
         std::uniform_real_distribution<double> dist(0.0, 1.0);
         // fill the partcle vec with new particles, generated from a random position
-        std::ranges::generate(this->particles, [&]() {
+        std::generate(this->particles.begin(), this->particles.end(), [&]() {
             return Particle<D>([&]() {
                 return Vector<double, D>([&]() {
                     return dist(rnd);
