@@ -31,7 +31,7 @@ class Particle {
         this->position = positionGenerator();
         this->velocity = Vector<double, D>();
         this->force = Vector<double, D>();
-        this->mass = 1000.0; // todo : change this in the future
+        this->mass = 10.0; // todo : change this in the future
     }
     /// @brief Creates a particle with all sets params.
     Particle(Vector<double, D> pos, Vector<double, D> vel, Vector<double, D> force, double mass) {
@@ -49,20 +49,19 @@ class Particle {
     }
 
     // updating methods
-    inline void updateVelocity(double deltaTime) {
+    void updateVelocity(double deltaTime) {
         this->velocity += this->force * deltaTime;
     }
 
-    inline void updatePosition(double deltaTime) {
-        Vector<double, D> oldPosition = this->position;
+    void updatePosition(double deltaTime) {
         this->position += this->velocity * deltaTime;
     }
 
-    inline void resetForce() {
+    void resetForce() {
         this->force.reset();
     }
 
-    inline void addForce(Vector<double, D> force) {
+    void addForce(Vector<double, D> force) {
         this->force += force;
     }
 

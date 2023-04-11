@@ -45,6 +45,8 @@ class SDLVisulizer : public Visulizer<Universe> {
 
     public: 
     void draw(Universe* universe) const override {
+        SDL_SetRenderDrawColor(this->renderer, 0, 0, 0, 1);
+        SDL_RenderClear(this->renderer);
         SDL_SetRenderDrawColor(this->renderer, 255, 255, 255, 255);
         for(auto particule : universe->getParticles()){
             SDL_RenderDrawPoint(this->renderer, particule.getPosition()[0] * 800, particule.getPosition()[1] * 450);

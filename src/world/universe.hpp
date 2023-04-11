@@ -108,8 +108,8 @@ void Universe<D, N, T>::step(double deltaTime) {
 template<unsigned int D, unsigned int N, typename T>
 void Universe<D, N, T>::updateParticleForces(double deltaTime) {
     // reset all the forces to zero
-    for(auto particle: this->particles) {
-        particle.resetForce();
+    for(unsigned int i = 0; i < N; i++) {
+        this->particles[i].resetForce();
     }
     // compute all new forces
 
@@ -128,16 +128,16 @@ void Universe<D, N, T>::updateParticleForces(double deltaTime) {
 template<unsigned int D, unsigned int N, typename T>
 void Universe<D, N, T>::updateParticleVel(double deltaTime) {
     // loop through every particle, and update velocity with force
-    for(auto particle: this->particles) {
-        particle.updateVelocity(deltaTime);
+    for(unsigned int i = 0; i < N; i++) {
+        this->particles[i].updateVelocity(deltaTime);
     }
 }
 
 template<unsigned int D, unsigned int N, typename T>
 void Universe<D, N, T>::updateParticlePos(double deltaTime) {
     // loop over every particle, and update pos by velocity
-    for(auto particle: this->particles) {
-        particle.updatePosition(deltaTime);
+    for(unsigned int i = 0; i < N; i++) {
+        this->particles[i].updatePosition(deltaTime);
     }
 }
 
