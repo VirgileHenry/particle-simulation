@@ -91,8 +91,9 @@ class Vector {
 
     /// @brief reset the vector in place, sets all its value to zero
     void reset() {
-        // set all values to default
-        *this->values = {0};
+        for(unsigned int i = 0; i < D; i++) {
+            this->values[i] = {};
+        }
     }
 
 };

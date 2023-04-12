@@ -10,8 +10,8 @@ class SDLVisulizer : public Visulizer<Universe> {
     private:
     SDL_Window* window;
     SDL_Renderer* renderer;
-    const bool show_vel = true;
-    const bool show_force = true;
+    const bool show_vel = false;
+    const bool show_force = false;
     
 
     public:
