@@ -8,8 +8,9 @@ int main() {
     SDLVisulizer<Universe<2, 2, GravityInteractor<2>>> visulizer = SDLVisulizer<Universe<2, 2, GravityInteractor<2>>>();
     universe.registerVisulizer(&visulizer);
 
-    for(unsigned int i = 0; i < 10000; i++) {
-        universe.step(0.000001);
+    for(unsigned int i = 0; i < 10; i++) {
+        universe.step(0.1);
+        getchar();
     }
 
 }

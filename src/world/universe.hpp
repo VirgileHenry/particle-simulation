@@ -37,9 +37,8 @@ class Universe {
     void registerVisulizer(Visulizer<Universe<D, N, T>> *visulizer);
 
     private:
-    void updateParticleForces(double deltaTime);    
-    void updateParticleVel(double deltaTime);
-    void updateParticlePos(double deltaTime);
+    void updateParticleForces();
+    void stromerVerletUpdate(double deltaTime);
 
     public:
     Universe() = delete;    
@@ -94,31 +93,26 @@ class Universe {
 template<unsigned int D, unsigned int N, typename T>
 void Universe<D, N, T>::step(double deltaTime) {
     // compute the forces on all particles
-    this->updateParticleForces(deltaTime);
-    // update particles velocity
-    this->updateParticleVel(deltaTime);
-    // update particles positions
-    this->updateParticlePos(deltaTime);
-    // trigger all visulizers
+    this->stromerVerletUpdate(deltaTime);
     for(Visulizer<Universe<D, N, T>> *visulizer: this->registered_visulizer) {
         visulizer->draw(this);
     }
 }
 
 template<unsigned int D, unsigned int N, typename T>
-void Universe<D, N, T>::updateParticleForces(double deltaTime) {
+void Universe<D, N, T>::updateParticleForces() {
     // reset all the forces to zero
     for(unsigned int i = 0; i < N; i++) {
         this->particles[i].resetForce();
     }
     // compute all new forces
 
-    // temporary to make work the interactor
-    for(unsigned int i = 0; i < N; i++) {
+    // we can start at 1, as the first particle would not compute with anyone
+    for(unsigned int i = 1; i < N; i++) {
+        // todo : loop only on particles on nearby chunks
         for(unsigned int j = 0; j < i; j++) {
             // this is the force that j particle exerce on i particule.
             Vector<double, D> force = this->interactor.computeInteractionForce(this->particles[i], this->particles[j]);
-            // maybe don't do this if forces are not symmetrical ?
             this->particles[i].addForce(force);
             this->particles[j].addForce(-force);
         }
@@ -126,18 +120,25 @@ void Universe<D, N, T>::updateParticleForces(double deltaTime) {
 }
 
 template<unsigned int D, unsigned int N, typename T>
-void Universe<D, N, T>::updateParticleVel(double deltaTime) {
-    // loop through every particle, and update velocity with force
+void Universe<D, N, T>::stromerVerletUpdate(double deltaTime) {
+    // one step of the stromer verlet algorithm
+    // update all particles, and store previous forces
+    // is it ok to create this size array on the stack every frame ?
+    Vector<double, D> f_old[N];
+    // first update of stromer verlet
     for(unsigned int i = 0; i < N; i++) {
-        this->particles[i].updateVelocity(deltaTime);
+        this->particles[i].updatePosition(
+            (this->particles[i].getVelocity() + this->particles[i].getForce() * 0.5 / (this->particles[i].getMass())) * deltaTime
+        );
+        f_old[i] = this->particles[i].getForce();
     }
-}
-
-template<unsigned int D, unsigned int N, typename T>
-void Universe<D, N, T>::updateParticlePos(double deltaTime) {
-    // loop over every particle, and update pos by velocity
+    // compute new forces
+    this->updateParticleForces();
+    // second update of stromer verlet
     for(unsigned int i = 0; i < N; i++) {
-        this->particles[i].updatePosition(deltaTime);
+        this->particles[i].updateVelocity(
+            (this->particles[i].getForce() + f_old[i] * 0.5 / (this->particles[i].getMass())) * deltaTime
+        );
     }
 }
 

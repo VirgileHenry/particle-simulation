@@ -13,7 +13,7 @@ class Particle {
     /// @brief  last used id of the particles.
     static int last_id;
 
-    public:
+    private:
     int id; // id for this particle
     Vector<double, D> position; // position of the particle, in 3 dimension space
     Vector<double, D> velocity; // velocity of that particle, in 3 dimension space
@@ -44,17 +44,29 @@ class Particle {
 
     // getters
     public:
-    Vector<double, D>& getPosition() {
+    Vector<double, D> getPosition() const {
         return this->position;
     }
 
-    // updating methods
-    void updateVelocity(double deltaTime) {
-        this->velocity += this->force * deltaTime;
+    Vector<double, D> getVelocity() const {
+        return this->velocity;
     }
 
-    void updatePosition(double deltaTime) {
-        this->position += this->velocity * deltaTime;
+    Vector<double, D> getForce() const {
+        return this->force;
+    }
+
+    double getMass() const {
+        return this->mass;
+    }
+
+    // updating methods
+    void updateVelocity(Vector<double, D> ammount) {
+        this->velocity += ammount;
+    }
+
+    void updatePosition(Vector<double, D> ammount) {
+        this->position += ammount;
     }
 
     void resetForce() {

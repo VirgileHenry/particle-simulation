@@ -1,21 +1,19 @@
 #pragma once
 
+#include "../maths/vector.hpp"
+
 /// @brief A view port shows what part of the universe to show. 
 class ViewPort {
     public:
-    // would be more efficients to use our own vectors ?
-    double x, y;
-    double w, h;
-    unsigned int X, Y;
+    Vector<double, 2> corner;
+    Vector<double, 2> size;
+    Vector<unsigned int, 2> dimensions;
 
     public:
-    ViewPort(double x, double y, double w, double h, unsigned int X, unsigned int Y) {
-        this->x = x;
-        this->y = y;
-        this->w = w;
-        this->h = h;
-        this->X = X;
-        this->Y = Y;
+    ViewPort(Vector<double, 2> corner, Vector<double, 2> size, Vector<unsigned int, 2> dimensions) {
+        this->corner = corner;
+        this->size = size;
+        this->dimensions = dimensions;
     }
 
 };

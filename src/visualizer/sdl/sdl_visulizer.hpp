@@ -10,6 +10,8 @@ class SDLVisulizer : public Visulizer<Universe> {
     private:
     SDL_Window* window;
     SDL_Renderer* renderer;
+    const bool show_vel = true;
+    const bool show_force = true;
     
 
     public:
@@ -50,6 +52,27 @@ class SDLVisulizer : public Visulizer<Universe> {
         SDL_SetRenderDrawColor(this->renderer, 255, 255, 255, 255);
         for(auto particule : universe->getParticles()){
             SDL_RenderDrawPoint(this->renderer, particule.getPosition()[0] * 800, particule.getPosition()[1] * 450);
+        }
+        // debug display
+        if(this->show_force) {
+            SDL_SetRenderDrawColor(this->renderer, 0, 255, 0, 255);
+            // draw all particules velocity
+            for(auto particule : universe->getParticles()){
+                SDL_RenderDrawLine(this->renderer,
+                    particule.getPosition()[0] * 800, particule.getPosition()[1] * 450,
+                    particule.getPosition()[0] * 800 + particule.getForce()[0], particule.getPosition()[1] * 450 + particule.getForce()[1]
+                );
+            }
+        }
+        if(this->show_vel) {
+            SDL_SetRenderDrawColor(this->renderer, 255, 0, 0, 255);
+            // draw all particules velocity
+            for(auto particule : universe->getParticles()){
+                SDL_RenderDrawLine(this->renderer,
+                    particule.getPosition()[0] * 800, particule.getPosition()[1] * 450,
+                    particule.getPosition()[0] * 800 + particule.getVelocity()[0], particule.getPosition()[1] * 450 + particule.getVelocity()[1]
+                );
+            }
         }
         SDL_RenderPresent(this->renderer);
 
