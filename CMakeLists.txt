@@ -12,6 +12,11 @@ set(CMAKE_CXX_FLAGS "-pg -Wall -O3")
 # create target
 add_executable(main "src/main.cpp")
 
+# tests
+include(CTest)
+add_executable(vector_test "test/vector.cpp")
+add_test(NAME VectorTest COMMAND "./vector_test")
+
 # link the sdl2
 find_package(SDL2 REQUIRED)
 target_link_libraries(main PRIVATE ${SDL2_LIBRARIES})
