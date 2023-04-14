@@ -4,7 +4,7 @@
 
 
 template<unsigned int D>
-class GravityInteractor : Interactor<D> {
+class GravityInteractor : public Interactor<D> {
     public:
     GravityInteractor() = default;
     public:

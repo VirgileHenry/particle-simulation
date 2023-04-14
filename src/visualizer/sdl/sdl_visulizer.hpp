@@ -50,27 +50,27 @@ class SDLVisulizer : public Visulizer<Universe> {
         SDL_SetRenderDrawColor(this->renderer, 0, 0, 0, 1);
         SDL_RenderClear(this->renderer);
         SDL_SetRenderDrawColor(this->renderer, 255, 255, 255, 255);
-        for(auto particule : universe->getParticles()){
-            SDL_RenderDrawPoint(this->renderer, particule.getPosition()[0] * 800, particule.getPosition()[1] * 450);
+        for(auto particle : universe->getParticles()){
+            SDL_RenderDrawPoint(this->renderer, particle.getPosition()[0] * 800, particle.getPosition()[1] * 450);
         }
         // debug display
         if(this->show_force) {
             SDL_SetRenderDrawColor(this->renderer, 0, 255, 0, 255);
-            // draw all particules velocity
-            for(auto particule : universe->getParticles()){
+            // draw all particles velocity
+            for(auto particle : universe->getParticles()){
                 SDL_RenderDrawLine(this->renderer,
-                    particule.getPosition()[0] * 800, particule.getPosition()[1] * 450,
-                    particule.getPosition()[0] * 800 + particule.getForce()[0], particule.getPosition()[1] * 450 + particule.getForce()[1]
+                    particle.getPosition()[0] * 800, particle.getPosition()[1] * 450,
+                    particle.getPosition()[0] * 800 + particle.getForce()[0], particle.getPosition()[1] * 450 + particle.getForce()[1]
                 );
             }
         }
         if(this->show_vel) {
             SDL_SetRenderDrawColor(this->renderer, 255, 0, 0, 255);
-            // draw all particules velocity
-            for(auto particule : universe->getParticles()){
+            // draw all particles velocity
+            for(auto particle : universe->getParticles()){
                 SDL_RenderDrawLine(this->renderer,
-                    particule.getPosition()[0] * 800, particule.getPosition()[1] * 450,
-                    particule.getPosition()[0] * 800 + particule.getVelocity()[0], particule.getPosition()[1] * 450 + particule.getVelocity()[1]
+                    particle.getPosition()[0] * 800, particle.getPosition()[1] * 450,
+                    particle.getPosition()[0] * 800 + particle.getVelocity()[0], particle.getPosition()[1] * 450 + particle.getVelocity()[1]
                 );
             }
         }

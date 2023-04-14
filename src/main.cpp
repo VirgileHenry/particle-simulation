@@ -3,13 +3,20 @@
 #include "visualizer/sdl/sdl_visulizer.hpp"
 
 int main() {
-    // create a universe, a visulizer, and register it
-    Universe<2, 3, GravityInteractor<2>> universe(GravityInteractor<2>(), 1.0, 0.5);
-    SDLVisulizer<Universe<2, 3, GravityInteractor<2>>> visulizer = SDLVisulizer<Universe<2, 3, GravityInteractor<2>>>();
+    // create a universe, an interactor, visulizer, and register it
+    Universe<2, 300, GravityInteractor<2>> universe(1.0, 0.5);
+
+    // interactor
+    GravityInteractor<2> interactor = GravityInteractor<2>();
+    universe.registerInteractor(&interactor);
+
+    // visulizer
+    SDLVisulizer<Universe<2, 300, GravityInteractor<2>>> visulizer = SDLVisulizer<Universe<2, 300, GravityInteractor<2>>>();
     universe.registerVisulizer(&visulizer);
 
-    for(unsigned int i = 0; i < 50000; i++) {
-        universe.step(0.000001);
+    // main simulation loop
+    for(unsigned int i = 0; i < 5000; i++) {
+        universe.step(0.0000001);
     }
 
 }

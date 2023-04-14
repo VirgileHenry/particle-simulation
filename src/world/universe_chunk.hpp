@@ -1,34 +1,55 @@
 #pragma once
 
-#include <vector>
+#include <unordered_set>
 #include "particle.hpp"
 #include "../maths/vector.hpp"
 
-/// @brief A chunk of the universe. 
+/// @brief A chunk of the universe.
+///         Seeing the state of it, it's mostly a wrapper around a collection of particle indexes.
 /// @tparam D The dimension of the universe the chunk is in.
-template<unsigned int D>
 class UniverseChunk {
     private:
-    double chunkSize;
-    std::vector<unsigned int> particlesIndex;
+    std::unordered_set<unsigned int> particles_index;
+    std::unordered_set<unsigned int> invalid_particles;
+    std::unordered_set<unsigned int> incoming_particles;
 
     public:
-    UniverseChunk(double chunkSize) {
-        this->chunkSize = chunkSize;
-        this->particlesIndex = std::vector<unsigned int>();
+    UniverseChunk() {
+        this->particles_index = std::unordered_set<unsigned int>();
+        this->incoming_particles = std::unordered_set<unsigned int>();
     }
 
     public:
-    void addParticle(unsigned int particle) {
-        this->particlesIndex.push_back(particle);
+    inline void addParticle(unsigned int particle) {
+        this->incoming_particles.insert(particle);
+    }
+
+    inline void removeParticle(unsigned int particle) {
+        this->invalid_particles.insert(particle);
+    }
+
+    inline bool containsParticle(unsigned int particle) {
+        return this->particles_index.contains(particle);
     }
 
     inline auto getParticleBegin() {
-        return this->particlesIndex.begin();
+        return this->particles_index.begin();
     }
 
     inline auto getParticleEnd() {
-        return this->particlesIndex.end();
+        return this->particles_index.end();
+    }
+
+    inline auto getParticleNumber() {
+        return this->particles_index.size();
+    }
+
+    /// @brief Clean the chunk collections.
+    ///         The multiple collections allow deletiion and insertion while iteration.
+    void flush() {
+        this->invalid_particles.clear();
+        this->particles_index.insert(this->incoming_particles.begin(), this->incoming_particles.end());
+        this->incoming_particles.clear();
     }
 
 };
