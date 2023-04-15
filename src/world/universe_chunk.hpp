@@ -45,8 +45,13 @@ class UniverseChunk {
     }
 
     /// @brief Clean the chunk collections.
-    ///         The multiple collections allow deletiion and insertion while iteration.
+    ///         The multiple collections allow deletion and insertion while iteration.
     void flush() {
+        for(auto part = this->invalid_particles.begin(); part != this->particles_index.end(); ++part) {
+            this->particles_index.erase(*part);
+        }
+        // for some reason next line does not work ? so we have to iterate manually
+        // this->particles_index.erase(this->invalid_particles.begin(), this->invalid_particles.end());
         this->invalid_particles.clear();
         this->particles_index.insert(this->incoming_particles.begin(), this->incoming_particles.end());
         this->incoming_particles.clear();

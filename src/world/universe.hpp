@@ -130,13 +130,7 @@ void Universe<D, N, T>::populateChunks() {
     // fill our chunks with the particles
     for(unsigned int i = 0; i < N; i++) {
         // get the chunk of i particle, put it in it
-        Vector<int, D> coordinates;
-        for(unsigned int coord = 0; coord < D; coord++) {
-            int c = (int)std::floor(this->particles[i].getPosition()[coord] / this->rcut);
-            c = std::max(0, std::min((int)std::ceil(this->ld / this->rcut), (int)coord));
-            coordinates[coord] = c;
-        }
-        this->chunks.at(coordinates).addParticle(i);
+        this->placeParticle(i);
     }
     // flush all chunks
     for(auto chunk = this->chunks.begin(); chunk != this->chunks.end(); chunk++) {
@@ -149,9 +143,10 @@ void Universe<D, N, T>::placeParticle(unsigned int particle_index) {
     // get the chunk of i particle, put it in it
     Vector<int, D> coordinates;
     for(unsigned int coord = 0; coord < D; coord++) {
-        int c = (int)std::floor(this->particles[particle_index].getPosition()[coord] / this->rcut);
-        c = std::max(0, std::min((int)std::ceil(this->ld / this->rcut), (int)coord));
-        coordinates[coord] = c;
+        int part_pos = (int)std::floor(this->particles[particle_index].getPosition()[coord] / this->rcut);
+        int chunk_count = (int)std::ceil(this->ld / this->rcut);
+        part_pos = std::max(0, std::min(chunk_count - 1, part_pos));
+        coordinates[coord] = part_pos;
     }
     this->chunks.at(coordinates).addParticle(particle_index);
 }
