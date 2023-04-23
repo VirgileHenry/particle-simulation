@@ -1,0 +1,4 @@
+PROJECT_NAME = "Quarks"
+OUTPUT_DIRECTORY = ./
+INPUT = ../src
+RECURSIVE = YES

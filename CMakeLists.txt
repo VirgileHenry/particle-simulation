@@ -20,3 +20,9 @@ add_test(NAME VectorTest COMMAND "./vector_test")
 # link the sdl2
 find_package(SDL2 REQUIRED)
 target_link_libraries(main PRIVATE ${SDL2_LIBRARIES})
+
+#doc
+set(DOCS_DIR				"${ROOT_DIR}../doc")
+add_custom_target(doc
+        COMMAND doxygen ../doc/Doxyfile
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/doc)
