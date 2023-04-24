@@ -7,16 +7,21 @@
 /// @brief A chunk of the universe.
 ///         Seeing the state of it, it's mostly a wrapper around a collection of particle indexes.
 /// @tparam D The dimension of the universe the chunk is in.
+template<unsigned int D>
 class UniverseChunk {
     private:
+    Vector<int, D> coordinates;
     std::unordered_set<unsigned int> particles_index;
     std::unordered_set<unsigned int> invalid_particles;
     std::unordered_set<unsigned int> incoming_particles;
 
     public:
-    UniverseChunk() {
+    UniverseChunk() = default;
+    UniverseChunk(Vector<int, D> coordinates) {
+        this->coordinates = coordinates;
         this->particles_index = std::unordered_set<unsigned int>();
         this->incoming_particles = std::unordered_set<unsigned int>();
+        this->invalid_particles = std::unordered_set<unsigned int>();
     }
 
     public:
@@ -56,5 +61,11 @@ class UniverseChunk {
         this->particles_index.insert(this->incoming_particles.begin(), this->incoming_particles.end());
         this->incoming_particles.clear();
     }
+
+    public:
+    // getters
+    Vector<int, D> getCoordinates() {
+        return this->coordinates;
+    } 
 
 };

@@ -3,7 +3,7 @@
 #include "../world/universe.hpp"
 
 template<typename Universe>
-class Visulizer {
+class Visualizer {
     public:
     /// @brief Show all the particles on the screen.
     virtual void draw(Universe* universe) const = 0;

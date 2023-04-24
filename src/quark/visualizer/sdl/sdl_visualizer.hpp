@@ -1,12 +1,12 @@
 #pragma once
 
 #include "SDL2/SDL.h"
-#include "../visulizer.hpp"
+#include "../visualizer.hpp"
 #include "../view_port.hpp"
 #include <iostream>
 
 template<typename Universe>
-class SDLVisulizer : public Visulizer<Universe> {
+class SDLVisulizer : public Visualizer<Universe> {
     private:
     SDL_Window* window;
     SDL_Renderer* renderer;

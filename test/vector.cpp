@@ -1,9 +1,9 @@
 /// Unit tests for the vector class, and all functionnalities.
 #include <cassert>
-#include "../src/maths/vector.hpp"
+#include "quark/maths/vector.hpp"
 
 int main() {
-    // all vector tets
+    // all vector test
 
     // test default constructor
     Vector<double, 3> v_default = Vector<double, 3>();
