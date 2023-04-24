@@ -3,7 +3,7 @@
 #include "visualizer/sdl/sdl_visulizer.hpp"
 
 int main() {
-    // create a universe, an interactor, visulizer, and register it (using type def bc for now, need to pass it to the visu)
+    // create a universe, an interactor, visualizer, and register it (using type def bc for now, need to pass it to the visu)
     typedef Universe<2, 3000, GravityInteractor<2>> MyUniverse;
     MyUniverse universe(1.0, 0.2);
 

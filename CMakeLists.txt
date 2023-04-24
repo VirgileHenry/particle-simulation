@@ -11,6 +11,7 @@ set(CMAKE_CXX_FLAGS "-pg -Wall -O3")
 
 # create target
 add_executable(main "src/main.cpp")
+#add_executable(solarSystem "demo/solar_system.cpp")
 
 # tests
 include(CTest)
