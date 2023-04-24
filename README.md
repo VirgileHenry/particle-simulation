@@ -1,5 +1,5 @@
 
-# <center>Quarks</center>
+# <center>Quark</center>
 
 ### <center>Implémentation d'une librairie de simulation de particules</center>
 
@@ -34,22 +34,50 @@ for(unsigned int i = 0; i < 1000; i++) {
 
 ```
 
-## Lab 1
+## Lab 1 - Introduction
+
+Une remise à plat du C/C++, ainsi que des débuts d'algorithme d'EDO.
+
+## Lab 2 - Particules et Collections
+
+Création de la classe particule. Cette classe a évolué au fil du temps. 
 
 On teste les performances d'ajout de particules à une liste pour différents nombres de particules:
 
-    int nbParticles = 64 -> Mesure : 0.000371615s
-    int nbParticles = 128 -> Mesure : 0.000774339s
-    int nbParticles = 1024 -> Mesure : 0.00566584s
-    int nbParticles = 2048 -> Mesure : 0.0103812s
-    int nbParticles = 4096 -> Mesure : 0.0159918s
-    int nbParticles = 32768 -> Mesure : 0.0683438s
+    nbParticles = 64        -> Mesure : 0.000371615s
+    nbParticles = 128       -> Mesure : 0.000774339s
+    nbParticles = 1024      -> Mesure : 0.00566584s
+    nbParticles = 2048      -> Mesure : 0.0103812s
+    nbParticles = 4096      -> Mesure : 0.0159918s
+    nbParticles = 32768     -> Mesure : 0.0683438s
 
 On commence ainsi à avoir une véritable différence de performances pour 2048 particules en 
-arrivant au centième de seconde de temps de calcul. 
+arrivant au centième de seconde de temps de calcul.
 
-## Lab 2
-## Lab 3
+Après analyse, nous avons décidé d'utiliser une `std::array` pour stocker les particules, car nous connnaissons leur nombre et il ne risque pas de changer.
+
+L'algorithme de Stromer-Verlet nous donne le mouvement des particules, et est encore à ce jour utilisé. Seulement, il a été déporté dans la classe Univers, et l'exemple du système solaire est aussi adapté avec la version évoluée de Quark.  
+
+## Lab 3 - Vecteur et Opérateur
+
+Création de la classe Vecteur. Pour un maximum d'abstraction, nous avons rendu ce vecteur template de la dimension et du type contenu. Ainsi, il a pu être réutilisé proprement à différents endroits, sans avoir à le ré-écrire. 
+
+En plus des opérateurs classique, nous avons mis la possibilité de hasher ce vecteur, afin qu'il puisse être utilisé comme clé dans les hash map. Au final, ça ne nous seras plus utile.
+
+La classe particule a ainsi été modifié pour utiliser des vecteurs. 
+
+Nous avons également créé la classe univers, qui stocke les particule et fait tourner la simulation. Pour diviser par deux le temps de calcul, nous ne calculons l'interaction entre la particule i et la particule j que si i < j. nous appliquons la force calculé aux deux particules.
+
 ## Lab 4
+
+Nous avons implémenté le maillage de l'univers.
+
+Après plusieurs itérations et tentatives d'optimisation, actuellement le nomnre de chunks est calculé à la compilation, et stocké dans un tableau. Cela donne de bien meilleurs temps d'accès et itération que la hash map précédement utilisé, mais cela à demandé plus de mise en place et de calcul lors de la création de l'univers, ainsi que des calculs fait à la compilation.
+
 ## Lab 5
+
+TODO
+
 ## Lab 6
+
+TODO
