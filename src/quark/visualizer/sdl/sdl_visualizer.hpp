@@ -6,7 +6,7 @@
 #include <iostream>
 
 template<typename Universe>
-class SDLVisulizer : public Visualizer<Universe> {
+class SDLVisualizer : public Visualizer<Universe> {
     private:
     SDL_Window* window;
     SDL_Renderer* renderer;
@@ -15,7 +15,7 @@ class SDLVisulizer : public Visualizer<Universe> {
     
 
     public:
-    SDLVisulizer() {
+    SDLVisualizer() {
         // init members
 
         if(SDL_VideoInit(NULL) != 0) {
@@ -31,7 +31,7 @@ class SDLVisulizer : public Visualizer<Universe> {
 
     }
 
-    ~SDLVisulizer() {
+    ~SDLVisualizer() {
         SDL_DestroyWindow(this->window);
         SDL_DestroyRenderer(this->renderer);
         SDL_Quit();

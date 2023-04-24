@@ -81,7 +81,8 @@ class Universe {
     /// @param rcut max intercation distance
     /// @param particles the particles to populate the universe with
     Universe(Particle<D> particles[N]) {
-        this->particles = particles;
+        // from https://cplusplus.com/forum/beginner/200574/
+        std::copy(particles, particles + N, this->particles.begin());
 
         this->generateChunks();
         this->populateChunks();
@@ -152,6 +153,12 @@ unsigned int Universe<D, N, LD, RCUT>::getParticleChunk(unsigned int part) {
     return result;
 }
 
+/// @brief Generate an array of index offset. These offset represent the nearby chunks.
+///         This allow quick iteration over chunks.
+/// @tparam D dimension of the universe
+/// @tparam N Number of particles 
+/// @tparam LD size of the universe
+/// @tparam RCUT max distance interaction
 template<unsigned int D, unsigned int N, double LD, double RCUT>
 void Universe<D, N, LD, RCUT>::generateChunkProxyIt() {
     // todo : this could be optimized ? as we are computing index to vec to index ? maybe faster way ?

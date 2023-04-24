@@ -12,9 +12,6 @@ set(CMAKE_CXX_FLAGS "-Wall -O3")
 # "create" the header only lib 
 include_directories("src")
 
-# create target
-add_executable(main "src/main.cpp")
-#add_executable(solarSystem "demo/solar_system.cpp")
 
 # tests
 include(CTest)
@@ -23,10 +20,12 @@ add_test(NAME VectorTest COMMAND "./vector_test")
 
 # examples
 add_executable(main "examples/test.cpp")
+add_executable(solar_system "demo/solar_system.cpp")
 
 # link the sdl2
 find_package(SDL2 REQUIRED)
 target_link_libraries(main PRIVATE ${SDL2_LIBRARIES})
+target_link_libraries(solar_system PRIVATE ${SDL2_LIBRARIES})
 
 #doc
 set(DOCS_DIR "${ROOT_DIR}../doc")
