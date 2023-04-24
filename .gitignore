@@ -1,4 +1,6 @@
 build/
 sujets/
+cmake-build-debug/
 
 .vscode
+.idea
