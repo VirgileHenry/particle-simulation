@@ -4,6 +4,12 @@
 #include "particle.hpp"
 #include "../maths/vector.hpp"
 
+struct particleHash {
+    size_t operator() (unsigned int particle) const {
+        return (size_t)particle;
+    }
+};
+
 /// @brief A chunk of the universe.
 ///         Seeing the state of it, it's mostly a wrapper around a collection of particle indexes.
 /// @tparam D The dimension of the universe the chunk is in.
@@ -11,17 +17,17 @@ template<unsigned int D>
 class UniverseChunk {
     private:
     Vector<int, D> coordinates;
-    std::unordered_set<unsigned int> particles_index;
-    std::unordered_set<unsigned int> invalid_particles;
-    std::unordered_set<unsigned int> incoming_particles;
+    std::unordered_set<unsigned int, particleHash> particles_index;
+    std::unordered_set<unsigned int, particleHash> invalid_particles;
+    std::unordered_set<unsigned int, particleHash> incoming_particles;
 
     public:
     UniverseChunk() = default;
     UniverseChunk(Vector<int, D> coordinates) {
         this->coordinates = coordinates;
-        this->particles_index = std::unordered_set<unsigned int>();
-        this->incoming_particles = std::unordered_set<unsigned int>();
-        this->invalid_particles = std::unordered_set<unsigned int>();
+        this->particles_index = std::unordered_set<unsigned int, particleHash>();
+        this->incoming_particles = std::unordered_set<unsigned int, particleHash>();
+        this->invalid_particles = std::unordered_set<unsigned int, particleHash>();
     }
 
     public:

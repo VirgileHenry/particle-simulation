@@ -3,7 +3,7 @@
 
 int main() {
     // create a universe, an interactor, visulizer, and register it (using type def bc for now, need to pass it to the visu)
-    typedef Universe<2, 10000, 1.0, 0.1> MyUniverse;
+    typedef Universe<2, 10000, 1.0, 0.02> MyUniverse;
     MyUniverse universe = MyUniverse();
 
     // interactor
@@ -16,6 +16,7 @@ int main() {
 
     // main simulation loop
     for(unsigned int i = 0; i < 100; i++) {
+        // std::cout << "step " << i << std::endl;
         universe.step(0.0000001);
     }
 }

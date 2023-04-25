@@ -231,8 +231,11 @@ void Universe<D, N, LD, RCUT>::updateParticleForces() {
                 // chunk at chunk + offset may not exist
                 if(0 <= chunk + chunk_proxy_it[i] && chunk + chunk_proxy_it[i] < (int)const_pow(C, D)) {
                     // loop over every particle of the chunk to compute force with
-                    UniverseChunk<D> lookup_chunk = this->chunks[chunk + chunk_proxy_it[i]];
-                    for(auto part_j = lookup_chunk.getParticleBegin(); part_j != lookup_chunk.getParticleEnd(); ++part_j) {
+                    for(
+                        auto part_j = this->chunks[chunk + chunk_proxy_it[i]].getParticleBegin();
+                        part_j != this->chunks[chunk + chunk_proxy_it[i]].getParticleEnd();
+                        ++part_j
+                    ) {
                         // only compute forces if j < i: this allows to divide calcs per 2, and don't compute with ourselves
                         if(*part_i <= *part_j) {
                             continue;
