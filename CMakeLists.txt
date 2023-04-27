@@ -7,7 +7,7 @@ project(Demo CXX)
 
 # all c++ flags (-O3 is our best choice here)
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "-pg -Wall -O3")
+set(CMAKE_CXX_FLAGS "-pg -Wall -O0")
 
 # "create" the header only lib 
 include_directories("src")
