@@ -61,7 +61,7 @@ int main() {
     universe.registerVisualizer(&visualizer);
 
     // main simulation loop
-    for(unsigned int i = 0; i < 5000; i++) {
+    for(unsigned int i = 0; i < 500000; i++) {
         universe.step(3600); // simulate hour by hour 
     }
 
