@@ -3,7 +3,7 @@
 
 int main() {
     // create a universe, an interactor, visulizer, and register it (using type def bc for now, need to pass it to the visu)
-    typedef Universe<2, 10000, 1.0, 0.02> MyUniverse;
+    typedef Universe<2, 1000, 1.0, 0.1> MyUniverse;
     MyUniverse universe = MyUniverse();
 
     // interactor

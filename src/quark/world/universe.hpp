@@ -13,6 +13,12 @@
 #include "interactions/interactor.hpp"
 #include "../visualizer/visualizer.hpp"
 
+enum BORDER_TYPE {
+    absorbent, // default
+    reflexive,
+    periodic,
+}; 
+
 /// @brief Universe class.
 /// @tparam D the number of dimensions of the universe.
 /// @tparam N the number of particles in the universe.
@@ -20,15 +26,18 @@ template<unsigned int D, unsigned int N, double LD, double RCUT>
 class Universe {
     private:
     constexpr static unsigned int C = const_div(LD, RCUT);
+    constexpr static unsigned int CHUNK_LENGTH = const_pow(C, D);
+    constexpr static unsigned int CHUNK_IT_LENGTH = const_pow(3, D);
     // interactors and visulizers
     std::list<Interactor<D>*> registered_interactors;
     std::list<Visualizer<Universe<D, N, LD, RCUT>>*> registered_visulizer;
+    BORDER_TYPE border = BORDER_TYPE::absorbent;
 
     std::array<Particle<D>, N> particles;
-    UniverseChunk<D> chunks[const_pow(C, D)];
+    UniverseChunk<D> chunks[CHUNK_LENGTH];
 
     // created once for optimisation, allows to iterate over nearby chunks
-    int chunk_proxy_it[const_pow(3, D)];
+    int chunk_proxy_it[CHUNK_IT_LENGTH];
 
     // getters and setters
     public:
@@ -110,7 +119,7 @@ class Universe {
 template<unsigned int D, unsigned int N, double LD, double RCUT>
 void Universe<D, N, LD, RCUT>::generateChunks() {
     // generate every chunk
-    for(unsigned int chunk_index = 0; chunk_index < const_pow(C, D); chunk_index++) {
+    for(unsigned int chunk_index = 0; chunk_index < this->CHUNK_LENGTH; chunk_index++) {
         // create the vector from that index
         Vector<int, D> coordinates = this->intCoordToVec(chunk_index);
         // create a chunk at that coordinates
@@ -130,7 +139,7 @@ void Universe<D, N, LD, RCUT>::populateChunks() {
         this->placeParticle(i, this->getParticleChunk(i));
     }
     // flush all chunks
-    for(unsigned int chunk = 0; chunk < const_pow(C, D); chunk++) {
+    for(unsigned int chunk = 0; chunk < this->CHUNK_LENGTH; chunk++) {
         this->chunks[chunk].flush();
     }
 }
@@ -144,11 +153,12 @@ template<unsigned int D, unsigned int N, double LD, double RCUT>
 unsigned int Universe<D, N, LD, RCUT>::getParticleChunk(unsigned int part) {
     // get the chunk of i particle
     Vector<double, D> pos = this->particles[part].getPosition();
+    // todo : implement border types here
     int result = (int)floor(pos[0] / RCUT);
-    result = std::max(0, std::min(result, (int)this->C) - 1);
+    result = std::max(0, std::min(result, (int)this->C - 1));
     for(unsigned int i = 1; i < D; i++) {
         result *= this->C;
-        result += std::max(0, std::min((int)floor(pos[i] / RCUT), (int)this->C) - 1);
+        result += std::max(0, std::min((int)floor(pos[i] / RCUT), (int)this->C - 1));
     }
     return result;
 }
@@ -162,8 +172,9 @@ unsigned int Universe<D, N, LD, RCUT>::getParticleChunk(unsigned int part) {
 template<unsigned int D, unsigned int N, double LD, double RCUT>
 void Universe<D, N, LD, RCUT>::generateChunkProxyIt() {
     // todo : this could be optimized ? as we are computing index to vec to index ? maybe faster way ?
+    // not too worried about optimizing this, as it runs once at the creation of the universe
     // create the proxy chunk iterator
-    for(unsigned int chunk_index = 0; chunk_index < const_pow(3, D); chunk_index++) {
+    for(unsigned int chunk_index = 0; chunk_index < this->CHUNK_IT_LENGTH; chunk_index++) {
         // create the vector from that index. Basically same code than for all chunks 
         unsigned int current_index = chunk_index;
         Vector<int, D> coordinates;
@@ -223,13 +234,13 @@ void Universe<D, N, LD, RCUT>::updateParticleForces() {
     
     // update particles force, taking into account the chunks
     // loop over every chunk, update every particle in that chunk
-    for(unsigned int chunk = 0; chunk < const_pow(C, D); chunk++) {
+    for(unsigned int chunk = 0; chunk < this->CHUNK_LENGTH; chunk++) {
         for(auto part_i = this->chunks[chunk].getParticleBegin(); part_i != this->chunks[chunk].getParticleEnd(); ++part_i) {
             // update particle at index part_i
             // iterate over every nearby chunk
-            for(unsigned int i = 0; i < const_pow(3, D); i++) {
+            for(unsigned int i = 0; i < this->CHUNK_IT_LENGTH; i++) {
                 // chunk at chunk + offset may not exist
-                if(0 <= chunk + chunk_proxy_it[i] && chunk + chunk_proxy_it[i] < (int)const_pow(C, D)) {
+                if(0 <= chunk + chunk_proxy_it[i] && chunk + chunk_proxy_it[i] < (int)this->CHUNK_LENGTH) {
                     // loop over every particle of the chunk to compute force with
                     for(
                         auto part_j = this->chunks[chunk + chunk_proxy_it[i]].getParticleBegin();
@@ -280,7 +291,7 @@ void Universe<D, N, LD, RCUT>::stromerVerletUpdate(double deltaTime) {
 template<unsigned int D, unsigned int N, double LD, double RCUT>
 void Universe<D, N, LD, RCUT>::verifyParticlesChunks() {
     // loop through all chunks, all particles, check they are in the right chunk.
-    for(unsigned int chunk = 0; chunk < const_pow(C, D); chunk++) {
+    for(unsigned int chunk = 0; chunk < this->CHUNK_LENGTH; chunk++) {
         for(auto part = this->chunks[chunk].getParticleBegin(); part != this->chunks[chunk].getParticleEnd(); ++part) {
             // check the particle is placed in the write spot in all dimensions
             unsigned int part_chunk = this->getParticleChunk(*part);
@@ -292,7 +303,7 @@ void Universe<D, N, LD, RCUT>::verifyParticlesChunks() {
         }
     }
     // flush all chunks
-    for(unsigned int chunk = 0; chunk < const_pow(C, D); chunk++) {
+    for(unsigned int chunk = 0; chunk < this->CHUNK_LENGTH; chunk++) {
         this->chunks[chunk].flush();
     }
 }

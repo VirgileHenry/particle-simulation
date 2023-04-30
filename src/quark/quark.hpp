@@ -6,6 +6,7 @@
 
 // common interactors.
 #include "world/interactions/gravity.hpp"
+#include "world/interactions/lennard_jones.hpp"
 
 // common visualizer
 #include "visualizer/sdl/sdl_visualizer.hpp"
