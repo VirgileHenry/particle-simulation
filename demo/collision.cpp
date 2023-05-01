@@ -40,7 +40,7 @@ int main() {
     for(unsigned int i = 0; i < 40; i++) {
         for(unsigned int j = 0; j < 40; j++) {
             double pos[2] {125 - 20 * spacing + i * spacing, 20 + j * spacing};
-            double vel[2] {0, 10};
+            double vel[2] {0, 100};
             Vector<double, 2> pos_vec(pos);
             Vector<double, 2> vel_vec(vel);
             Vector<double, 2> force_vec = Vector<double, 2>();
@@ -73,6 +73,11 @@ int main() {
     // visualizer
     SDLVisualizer<MyUniverse> visualizer = SDLVisualizer<MyUniverse>();
     universe.registerVisualizer(&visualizer);
+
+    double size[2] = {250, 150};
+    visualizer.setViewportSize(size);
+    unsigned int dim[2] {0, 1};
+    visualizer.setViewportDimensions(dim);
 
     // main simulation loop
     for(unsigned int i = 0; i < 400000; i++) {
