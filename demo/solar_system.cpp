@@ -68,7 +68,7 @@ int main() {
 
     // main simulation loop
     for(unsigned int i = 0; i < 500000; i++) {
-        universe.step(0.001); // simulate hour by hour 
+        universe.step(0.0015); // simulate hour by hour 
     }
 
 

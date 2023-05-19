@@ -1,9 +1,10 @@
 #pragma once
 
+#include <iostream>
+#include <chrono>
 #include "SDL2/SDL.h"
 #include "../visualizer.hpp"
 #include "../view_port.hpp"
-#include <iostream>
 
 template<typename Universe>
 class SDLVisualizer : public Visualizer<Universe> {
@@ -15,6 +16,7 @@ class SDLVisualizer : public Visualizer<Universe> {
     Vector<int, 2> window_size;
     // view port
     ViewPort view;
+    std::chrono::steady_clock::time_point last_draw_time;
     
     
     public:
@@ -34,7 +36,7 @@ class SDLVisualizer : public Visualizer<Universe> {
         this->window = SDL_CreateWindow("SDL universe visulizer", 100, 100, window_size[0], window_size[1], SDL_WINDOW_RESIZABLE);
         this->renderer = SDL_CreateRenderer(this->window, -1, 0);
 
-
+        this->last_draw_time = std::chrono::steady_clock::now();
     }
 
     ~SDLVisualizer() {
@@ -85,6 +87,9 @@ class SDLVisualizer : public Visualizer<Universe> {
 
     public: 
     void draw(Universe* universe) override {
+        // get delta time to display
+        this->last_draw_time = std::chrono::steady_clock::now();
+
         SDL_SetRenderDrawColor(this->renderer, 0, 0, 0, 1);
         SDL_RenderClear(this->renderer);
         SDL_SetRenderDrawColor(this->renderer, 255, 255, 255, 255);

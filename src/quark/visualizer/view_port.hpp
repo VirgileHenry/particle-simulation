@@ -10,7 +10,13 @@ class ViewPort {
     Vector<unsigned int, 2> dimensions;
 
     public:
-    ViewPort() = default;
+    ViewPort() {
+        double size[2] = {1, 1};
+        unsigned int dims[2] = {0, 1};
+        this->corner = Vector<double, 2>();
+        this->size = Vector<double, 2>(size);
+        this->dimensions = Vector<unsigned int, 2>(dims);
+    }
     ViewPort(Vector<double, 2> corner, Vector<double, 2> size, Vector<unsigned int, 2> dimensions) {
         this->corner = corner;
         this->size = size;

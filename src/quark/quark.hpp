@@ -8,5 +8,8 @@
 #include "world/interactions/gravity.hpp"
 #include "world/interactions/lennard_jones.hpp"
 
+// common forces
+#include "world/forces/gravity.hpp"
+
 // common visualizer
 #include "visualizer/sdl/sdl_visualizer.hpp"

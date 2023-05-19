@@ -11,6 +11,7 @@
 #include "particle.hpp"
 #include "universe_chunk.hpp"
 #include "interactions/interactor.hpp"
+#include "forces/forces.hpp"
 #include "../visualizer/visualizer.hpp"
 
 enum BORDER_TYPE {
@@ -30,6 +31,7 @@ class Universe {
     constexpr static unsigned int CHUNK_IT_LENGTH = const_pow(3, D);
     // interactors and visulizers
     std::list<Interactor<D>*> registered_interactors;
+    std::list<Force<D>*> registered_forces;
     std::list<Visualizer<Universe<D, N, LD, RCUT>>*> registered_visulizer;
     BORDER_TYPE border = BORDER_TYPE::absorbent;
 
@@ -48,6 +50,7 @@ class Universe {
     public:
     void step(double deltaTime);
     void registerInteractor(Interactor<D> *interactor);
+    void registerForce(Force<D> *force);
     void registerVisualizer(Visualizer<Universe<D, N, LD, RCUT>> *visualizer);
 
     private:
@@ -263,6 +266,18 @@ void Universe<D, N, LD, RCUT>::updateParticleForces() {
             }
         }
     }
+
+    // also iterate over all unique forces
+    for(unsigned int chunk = 0; chunk < this->CHUNK_LENGTH; chunk++) {
+        for(auto part_i = this->chunks[chunk].getParticleBegin(); part_i != this->chunks[chunk].getParticleEnd(); ++part_i) {
+            // update particle at index part_i
+            // iterate over every nearby chunk
+            for(Force<D> *force: this->registered_forces) {
+                Vector<double, D> f = force->computeForce(this->particles[*part_i]);
+                this->particles[*part_i].addForce(f);
+            }
+        }
+    }
 }
 
 template<unsigned int D, unsigned int N, double LD, double RCUT>
@@ -312,6 +327,11 @@ void Universe<D, N, LD, RCUT>::verifyParticlesChunks() {
 template<unsigned int D, unsigned int N, double LD, double RCUT>
 void Universe<D, N, LD, RCUT>::registerInteractor(Interactor<D> *interactor) {
     this->registered_interactors.push_back(interactor);
+}
+
+template<unsigned int D, unsigned int N, double LD, double RCUT>
+void Universe<D, N, LD, RCUT>::registerForce(Force<D> *force) {
+    this->registered_forces.push_back(force);
 }
 
 template<unsigned int D, unsigned int N, double LD, double RCUT>
