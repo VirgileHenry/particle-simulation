@@ -58,7 +58,9 @@ int main() {
 
     // visualizer
     SDLVisualizer<MyUniverse> visualizer = SDLVisualizer<MyUniverse>();
+    XMLVisualizer<MyUniverse> fileVisualizer = XMLVisualizer<MyUniverse>(4, 0, 2, "SolarSystem");
     universe.registerVisualizer(&visualizer);
+    universe.registerVisualizer(&fileVisualizer);
     double corner[2] = {-10, -10};
     visualizer.setViewportCorner(corner);
     double size[2] = {20, 20};
@@ -67,8 +69,8 @@ int main() {
     visualizer.setViewportDimensions(dim);
 
     // main simulation loop
-    for(unsigned int i = 0; i < 500000; i++) {
-        universe.step(0.001); // simulate hour by hour 
+    for(unsigned int i = 0; i < 5000; i++) {
+        universe.step(0.1); // simulate hour by hour
     }
 
 

@@ -10,3 +10,4 @@
 
 // common visualizer
 #include "visualizer/sdl/sdl_visualizer.hpp"
+#include "visualizer/xml_visualizer.hpp"
