@@ -69,7 +69,7 @@ int main() {
     visualizer.setViewportDimensions(dim);
 
     // main simulation loop
-    for(unsigned int i = 0; i < 50000; i++) {
+    for(unsigned int i = 0; i < 500000; i++) {
         universe.step(0.000001); // simulate hour by hour
     }
 
