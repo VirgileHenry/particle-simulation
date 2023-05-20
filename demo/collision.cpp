@@ -1,11 +1,6 @@
-#include "../src/quark/quark.hpp"
+#include "quark/quark.hpp"
 
 /*
-/!\ DISCLAIMER /!\
-
-Currently, visualizers does not support view port and always draw particles in [0, 1]^D.
-Because of this, this simulation is not fully visible, and hardly visible at all.
-
 
 This compute a particle simulation of a collision of two opjects like so :
 

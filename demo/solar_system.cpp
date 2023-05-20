@@ -1,4 +1,4 @@
-#include "../src/quark/quark.hpp"
+#include "quark/quark.hpp"
 
 /*
 /!\ DISCLAIMER /!\
@@ -58,7 +58,9 @@ int main() {
 
     // visualizer
     SDLVisualizer<MyUniverse> visualizer = SDLVisualizer<MyUniverse>();
+    //XMLVisualizer<MyUniverse> fileVisualizer = XMLVisualizer<MyUniverse>(4, 0, 2, "SolarSystem");
     universe.registerVisualizer(&visualizer);
+    //universe.registerVisualizer(&fileVisualizer);
     double corner[2] = {-10, -10};
     visualizer.setViewportCorner(corner);
     double size[2] = {20, 20};
@@ -68,7 +70,7 @@ int main() {
 
     // main simulation loop
     for(unsigned int i = 0; i < 500000; i++) {
-        universe.step(0.0015); // simulate hour by hour 
+        universe.step(0.000001); // simulate hour by hour
     }
 
 

@@ -1,4 +1,4 @@
-#include "../src/quark/quark.hpp"
+#include "quark/quark.hpp"
 
 /*
 /!\ DISCLAIMER /!\
@@ -39,7 +39,7 @@ int main() {
     // small cube 
     for(unsigned int i = 0; i < 40; i++) {
         for(unsigned int j = 0; j < 40; j++) {
-            double pos[2] {125 - 20 * spacing + i * spacing, 20 + j * spacing};
+            double pos[2] {125 - 20 * spacing + i * spacing, 120 + j * spacing};
             double vel[2] {0, 0};
             Vector<double, 2> pos_vec(pos);
             Vector<double, 2> vel_vec(vel);
@@ -51,7 +51,7 @@ int main() {
     // large rectangle
     for(unsigned int i = 0; i < 160; i++) {
         for(unsigned int j = 0; j < 40; j++) {
-            double pos[2] {125 - 80 * spacing + i * spacing, 100 + j * spacing};
+            double pos[2] {125 - 80 * spacing + i * spacing, 200 + j * spacing};
             double vel[2] {0, 0};
             Vector<double, 2> pos_vec(pos);
             Vector<double, 2> vel_vec(vel);
@@ -78,10 +78,14 @@ int main() {
     SDLVisualizer<MyUniverse> visualizer = SDLVisualizer<MyUniverse>();
     universe.registerVisualizer(&visualizer);
 
-    double size[2] = {250, 150};
+    double size[2] = {250, 250};
     visualizer.setViewportSize(size);
     unsigned int dim[2] {0, 1};
     visualizer.setViewportDimensions(dim);
+
+    // ask the universe to use reflexive border and stabilize Ec
+    universe.restrainCineticEnergy(0.005);
+    universe.set_border_type(BORDER_TYPE::reflexive);
 
     // main simulation loop
     for(unsigned int i = 0; i < 400000; i++) {

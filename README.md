@@ -5,9 +5,9 @@
 
 ## Introduction
 
-Quark est une librairie "header-only" de simulation de particule, donnant accès aux fonctionnalités de base ainsi qu'a une simplicité de rajouter ses propres systèmes. 
+Quark est une librairie "header-only" de simulation de particules, donnant accès aux fonctionnalités de base ainsi qu'a une simplicité de rajouter ses propres systèmes. 
 
-A son coeur, cette librairie est une collection de particule qui possèdent force, vitesse et position, et auxquelles on applique les force d'interactions données.
+A son coeur, cette librairie est une collection de particules qui possèdent force, vitesse et position, et auxquelles on applique les force d'interactions données.
 
 ## Exemple d'utilisation :
 
@@ -66,18 +66,32 @@ En plus des opérateurs classique, nous avons mis la possibilité de hasher ce v
 
 La classe particule a ainsi été modifié pour utiliser des vecteurs. 
 
-Nous avons également créé la classe univers, qui stocke les particule et fait tourner la simulation. Pour diviser par deux le temps de calcul, nous ne calculons l'interaction entre la particule i et la particule j que si i < j. nous appliquons la force calculé aux deux particules.
+Nous avons également créé la classe univers, qui stocke les particules et fait tourner la simulation. Pour diviser par deux le temps de calcul, nous ne calculons l'interaction entre la particule i et la particule j que si i < j et nous appliquons la force calculé aux deux particules.
 
 ## Lab 4
 
 Nous avons implémenté le maillage de l'univers.
 
-Après plusieurs itérations et tentatives d'optimisation, actuellement le nomnre de chunks est calculé à la compilation, et stocké dans un tableau. Cela donne de bien meilleurs temps d'accès et itération que la hash map précédement utilisé, mais cela à demandé plus de mise en place et de calcul lors de la création de l'univers, ainsi que des calculs fait à la compilation.
+Après plusieurs itérations et tentatives d'optimisation, actuellement le nombre de chunks est calculé à la compilation, et stocké dans un tableau. Cela donne de bien meilleurs temps d'accès et itération que la hash map précédement utilisé, mais cela a demandé plus de mise en place et de calcul lors de la création de l'univers, ainsi que des calculs fait à la compilation.
 
 ## Lab 5
 
-TODO
+Pour l'implémentation de tests nous utilisons CTest. Ainsi en effectuant make test nous vérifions le bon fonctionnement de la classe Vector.
+
+Le système de visualisation implémenté dans la classe XMLVisualizer permet de générer un ensemble de fichiers .vtu permettant une visualisation de la simulation a posteriori. 
+
+A partir de notre implémentation de librairie de simulation de particules nous obtenons les diagrammes suivants :
+![DiagrammeCasUtilisations.png](DiagrammeCasUtilisations.png)
+![DiagrammeEtatTransition.png](DiagrammeEtatTransition.png)
+![DiagrammeSequence.png](DiagrammeSequence.png)
+![DiragrammeClasses.png](DiragrammeClasses.png)
 
 ## Lab 6
 
-TODO
+Nous avons rajouté les conditions aux limites. Lors de la relocalisation des particules dans les chunks, si nous avons des bordures absorbantes ou périodiques, nous enlevons les particules ou les replaçons. De plus, lors du calcul des forces des particules, si nous avons des bordures réflexives, nous ajoutons la force correspondante à chaque particule. 
+
+Après avoir comparé les deux méthodes réflexives, celle avec le potentiel permet des transitions beaucoup plus lisses. Cependant, elle est aussi plus faillible. Certaines particules peuvent passer au travers, lorsqu'elle sont poussé par d'autres particules.
+
+Pour ajouter un potentiel gravitationnel, nous avons rajouté toute la structure des `Forces`. Les Forces fonctionnent comme nos interacteurs, sauf qu'elles agissent sur une seule particule. Nous pouvons donc égallement enregistrer autant de Forces que l'on souhaite. Finalement, nous avons créé la classe Force Gravitationnelle qui est une force simulant la gravité sur les particules. Cela nous donne une structure extensible qui nous permet d'avoir les comportements demandés.
+
+Finalement, nous avons ajouté la limite d'énergie cinétique cible comme demandé.

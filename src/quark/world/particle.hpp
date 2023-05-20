@@ -31,7 +31,7 @@ class Particle {
         this->position = positionGenerator();
         this->velocity = Vector<double, D>();
         this->force = Vector<double, D>();
-        this->mass = 1.0; // todo : change this in the future
+        this->mass = 1.0;
     }
     /// @brief Creates a particle with all sets params.
     Particle(Vector<double, D> pos, Vector<double, D> vel, Vector<double, D> force, double mass) {

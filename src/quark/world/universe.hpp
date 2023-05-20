@@ -23,6 +23,8 @@ enum BORDER_TYPE {
 /// @brief Universe class.
 /// @tparam D the number of dimensions of the universe.
 /// @tparam N the number of particles in the universe.
+/// @tparam LD the size of the universe cube
+/// @tparam RCUT at what distance can we stop interactions
 template<unsigned int D, unsigned int N, double LD, double RCUT>
 class Universe {
     private:
@@ -41,6 +43,11 @@ class Universe {
     // created once for optimisation, allows to iterate over nearby chunks
     int chunk_proxy_it[CHUNK_IT_LENGTH];
 
+    // target cinetic energy 
+    bool restrain_cinetic_energy = false;
+    unsigned int restrain_ce_counter = 1000;
+    double Ecd = 1.;
+
     // getters and setters
     public:
     std::array<Particle<D>, N> getParticles(){
@@ -52,11 +59,19 @@ class Universe {
     void registerInteractor(Interactor<D> *interactor);
     void registerForce(Force<D> *force);
     void registerVisualizer(Visualizer<Universe<D, N, LD, RCUT>> *visualizer);
+    void restrainCineticEnergy(double target_energy) {
+        restrain_cinetic_energy = true;
+        Ecd = target_energy;
+    }
+    void set_border_type(BORDER_TYPE border) {
+        this->border = border;
+    }
 
     private:
     void updateParticleForces();
     void stromerVerletUpdate(double deltaTime);
     void verifyParticlesChunks();
+    void targetCineticEnergy();
 
     public:
     /// @brief Creates a universe with random particles in the [0x1]^D hyper cube.
@@ -73,7 +88,7 @@ class Universe {
         // this allow to avoid creating a random object for each particle
         std::default_random_engine rnd{std::random_device{}()};
         std::uniform_real_distribution<double> dist(0.0, 1.0);
-        // fill the partcle vec with new particles, generated from a random position
+        // fill the particle vec with new particles, generated from a random position
         std::generate(this->particles.begin(), this->particles.end(), [&]() {
             return Particle<D>([&]() {
                 return Vector<double, D>([&]() {
@@ -139,7 +154,11 @@ void Universe<D, N, LD, RCUT>::populateChunks() {
     // fill our chunks with the particles
     for(unsigned int i = 0; i < N; i++) {
         // get the chunk of i particle, put it in it
-        this->placeParticle(i, this->getParticleChunk(i));
+        int part_chunk = this->getParticleChunk(i);
+        if(part_chunk < 0) {
+            continue; // particle is outside of chunks range
+        }
+        this->placeParticle(i, part_chunk);
     }
     // flush all chunks
     for(unsigned int chunk = 0; chunk < this->CHUNK_LENGTH; chunk++) {
@@ -156,10 +175,35 @@ template<unsigned int D, unsigned int N, double LD, double RCUT>
 unsigned int Universe<D, N, LD, RCUT>::getParticleChunk(unsigned int part) {
     // get the chunk of i particle
     Vector<double, D> pos = this->particles[part].getPosition();
-    // todo : implement border types here
-    int result = (int)floor(pos[0] / RCUT);
-    result = std::max(0, std::min(result, (int)this->C - 1));
-    for(unsigned int i = 1; i < D; i++) {
+    int result = 0;
+    for(unsigned int i = 0; i < D; i++) {
+        switch(this->border) {
+            case BORDER_TYPE::absorbent:
+                if(pos[i] < 0 || pos[i] >= LD) {
+                    return -1; // forget this particle by not replacing it
+                }
+                break;
+            case BORDER_TYPE::periodic:
+                // while we are not in that range, replace it in the range
+                while(pos[i] < 0) {
+                    pos[i] += LD;
+                }
+                while(pos[i] >= LD) {
+                    pos[i] -= LD;
+                }
+                break;
+            case BORDER_TYPE::reflexive:
+                // this will be handled by the apply force func.
+                // experimentally, this does not work alone. let's add a hard switch to keep them in bound.
+                break;
+                if(pos[i] < 0) {
+                    pos[i] = 0.0001;
+                }
+                else if(pos[i] >= LD) {
+                    pos[i] = LD - 0.0001; // forget this particle by not replacing it
+                }
+                break;
+        }
         result *= this->C;
         result += std::max(0, std::min((int)floor(pos[i] / RCUT), (int)this->C - 1));
     }
@@ -174,7 +218,7 @@ unsigned int Universe<D, N, LD, RCUT>::getParticleChunk(unsigned int part) {
 /// @tparam RCUT max distance interaction
 template<unsigned int D, unsigned int N, double LD, double RCUT>
 void Universe<D, N, LD, RCUT>::generateChunkProxyIt() {
-    // todo : this could be optimized ? as we are computing index to vec to index ? maybe faster way ?
+    // ? opti : this could be optimized ? as we are computing index to vec to index ? maybe faster way ?
     // not too worried about optimizing this, as it runs once at the creation of the universe
     // create the proxy chunk iterator
     for(unsigned int chunk_index = 0; chunk_index < this->CHUNK_IT_LENGTH; chunk_index++) {
@@ -225,6 +269,15 @@ void Universe<D, N, LD, RCUT>::step(double deltaTime) {
     // call each visulizer
     for(Visualizer<Universe<D, N, LD, RCUT>> *visulizer: this->registered_visulizer) {
         visulizer->draw(this);
+    }
+
+    // restrain target energy
+    if(this->restrain_cinetic_energy) {
+        this->restrain_ce_counter--;
+        if(this->restrain_ce_counter <= 0) {
+            this->restrain_ce_counter = 1000;
+            this->targetCineticEnergy();
+        }
     }
 }
 
@@ -278,6 +331,38 @@ void Universe<D, N, LD, RCUT>::updateParticleForces() {
             }
         }
     }
+
+    // if the border type is set to relfexive, apply force to simulate this
+    if(this->border == BORDER_TYPE::reflexive) {
+        
+        for(unsigned int chunk = 0; chunk < this->CHUNK_LENGTH; chunk++) {
+            for(auto part_i = this->chunks[chunk].getParticleBegin(); part_i != this->chunks[chunk].getParticleEnd(); ++part_i) {
+                // update particle at index part_i
+                // iterate over every nearby chunk
+                Vector<double, D> border_force = Vector<double, D>();
+                Vector<double, D> pos = this->particles[*part_i].getPosition();
+                for(unsigned int i = 0; i < D; i++) {
+                    if(pos[i] < 1.1224) { // rcut is 2^(1/6)
+                        double r = pos[i];
+                        // here, eps = 1; sigma = 1.
+                        // maybe add a nice way to do this in the future, but all examples have those values
+                        // and we need to sync them with the different values of the different interactors... ugggh
+                        double r_two_sixth = pow(2 * r, 6); // sounds like a star wars droid name
+                        border_force [i]= 24 / (2 * r) / r_two_sixth * (1 - 2 / r_two_sixth);
+                    }
+                    else if(pos[i] >= LD - 1.1224) { // rcut is 2^(1/6)
+                        double r = LD - pos[i];
+                        // here, eps = 1; sigma = 1.
+                        // maybe a nice way to do this in the future, but all examples have those values
+                        // and we need to sync them with the different values of the different interactors... ugggh
+                        double r_two_sixth = pow(2 * r, 6); // sounds like a star wars droid name
+                        border_force[i] = -24 / (2 * r) / r_two_sixth * (1 - 2 / r_two_sixth);
+                    }
+                }
+                this->particles[*part_i].addForce(border_force);
+            }
+        }
+    }
 }
 
 template<unsigned int D, unsigned int N, double LD, double RCUT>
@@ -289,7 +374,7 @@ void Universe<D, N, LD, RCUT>::stromerVerletUpdate(double deltaTime) {
     // first update of stromer verlet
     for(unsigned int i = 0; i < N; i++) {
         this->particles[i].updatePosition(
-            (this->particles[i].getVelocity() + this->particles[i].getForce() * 0.5 / (this->particles[i].getMass())) * deltaTime
+            (this->particles[i].getVelocity() + this->particles[i].getForce() * 0.5 * deltaTime / (this->particles[i].getMass())) * deltaTime
         );
         f_old[i] = this->particles[i].getForce();
     }
@@ -304,6 +389,17 @@ void Universe<D, N, LD, RCUT>::stromerVerletUpdate(double deltaTime) {
 }
 
 template<unsigned int D, unsigned int N, double LD, double RCUT>
+void Universe<D, N, LD, RCUT>::targetCineticEnergy() {
+    // compute beta
+    double beta = 0;
+    for(unsigned i = 0; i < N; i++) {
+        beta += this->particles[i].getMass() * this->particles[i].getVelocity().sq_magnitude();
+    }
+    beta = sqrt(this->Ecd / (beta * 0.5));
+    // compute 
+}
+
+template<unsigned int D, unsigned int N, double LD, double RCUT>
 void Universe<D, N, LD, RCUT>::verifyParticlesChunks() {
     // loop through all chunks, all particles, check they are in the right chunk.
     for(unsigned int chunk = 0; chunk < this->CHUNK_LENGTH; chunk++) {
@@ -311,7 +407,10 @@ void Universe<D, N, LD, RCUT>::verifyParticlesChunks() {
             // check the particle is placed in the write spot in all dimensions
             unsigned int part_chunk = this->getParticleChunk(*part);
             if(chunk != part_chunk) {
-                this->placeParticle(*part, part_chunk);
+                // -1 means do not replace the particle
+                if(part_chunk >= 0) {
+                    this->placeParticle(*part, part_chunk);
+                }
                 this->chunks[chunk].removeParticle(*part);
                 break;
             }
