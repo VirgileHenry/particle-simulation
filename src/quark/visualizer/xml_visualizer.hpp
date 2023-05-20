@@ -25,7 +25,7 @@ class XMLVisualizer : public Visualizer<Universe> {
     }
 
 
-    /// @brief Write all the datas in an XML file
+    /// @brief Write all the datas in an .vtu file. We always write 3D coordinates.
     void draw(Universe* universe) override{
 
         ofstream myFlow((this->fileName+to_string(this->nbIteration)+".vtu").c_str());

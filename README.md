@@ -5,9 +5,9 @@
 
 ## Introduction
 
-Quark est une librairie "header-only" de simulation de particule, donnant accès aux fonctionnalités de base ainsi qu'a une simplicité de rajouter ses propres systèmes. 
+Quark est une librairie "header-only" de simulation de particules, donnant accès aux fonctionnalités de base ainsi qu'a une simplicité de rajouter ses propres systèmes. 
 
-A son coeur, cette librairie est une collection de particule qui possèdent force, vitesse et position, et auxquelles on applique les force d'interactions données.
+A son coeur, cette librairie est une collection de particules qui possèdent force, vitesse et position, et auxquelles on applique les force d'interactions données.
 
 ## Exemple d'utilisation :
 
@@ -66,18 +66,21 @@ En plus des opérateurs classique, nous avons mis la possibilité de hasher ce v
 
 La classe particule a ainsi été modifié pour utiliser des vecteurs. 
 
-Nous avons également créé la classe univers, qui stocke les particule et fait tourner la simulation. Pour diviser par deux le temps de calcul, nous ne calculons l'interaction entre la particule i et la particule j que si i < j. nous appliquons la force calculé aux deux particules.
+Nous avons également créé la classe univers, qui stocke les particules et fait tourner la simulation. Pour diviser par deux le temps de calcul, nous ne calculons l'interaction entre la particule i et la particule j que si i < j et nous appliquons la force calculé aux deux particules.
 
 ## Lab 4
 
 Nous avons implémenté le maillage de l'univers.
 
-Après plusieurs itérations et tentatives d'optimisation, actuellement le nomnre de chunks est calculé à la compilation, et stocké dans un tableau. Cela donne de bien meilleurs temps d'accès et itération que la hash map précédement utilisé, mais cela à demandé plus de mise en place et de calcul lors de la création de l'univers, ainsi que des calculs fait à la compilation.
+Après plusieurs itérations et tentatives d'optimisation, actuellement le nombre de chunks est calculé à la compilation, et stocké dans un tableau. Cela donne de bien meilleurs temps d'accès et itération que la hash map précédement utilisé, mais cela a demandé plus de mise en place et de calcul lors de la création de l'univers, ainsi que des calculs fait à la compilation.
 
 ## Lab 5
 
-TODO
-
+A partir de notre implémentation de librairie de simulation de particules nous obtenons les diagrammes suivants :
+![DiagrammeCasUtilisations.png](DiagrammeCasUtilisations.png)
+![DiagrammeEtatTransition.png](DiagrammeEtatTransition.png)
+![DiagrammeSequence.png](DiagrammeSequence.png)
+![DiragrammeClasses.png](DiragrammeClasses.png)
 ## Lab 6
 
 TODO
