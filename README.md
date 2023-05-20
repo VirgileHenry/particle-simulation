@@ -75,6 +75,9 @@ Nous avons implémenté le maillage de l'univers.
 Après plusieurs itérations et tentatives d'optimisation, actuellement le nombre de chunks est calculé à la compilation, et stocké dans un tableau. Cela donne de bien meilleurs temps d'accès et itération que la hash map précédement utilisé, mais cela a demandé plus de mise en place et de calcul lors de la création de l'univers, ainsi que des calculs fait à la compilation.
 
 ## Lab 5
+Pour l'implémentation de tests nous utilisons CTest. Ainsi en effectuant make test nous vérifions le bon fonctionnement de la classe Vector.
+
+Le système de visualisation implémenté dans la classe XMLVisualizer permet de générer un ensemble de fichiers .vtu permettant une visualisation de la simulation a posteriori. 
 
 A partir de notre implémentation de librairie de simulation de particules nous obtenons les diagrammes suivants :
 ![DiagrammeCasUtilisations.png](DiagrammeCasUtilisations.png)
