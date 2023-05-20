@@ -3,9 +3,7 @@
 /*
 /!\ DISCLAIMER /!\
 
-Currently, visualizers does not support view port and always draw particles in [0, 1]^D.
-Because of this, this simulation is not fully visible, and hardly visible at all.
-
+With the latest impl of the border, the comet will be outside of the visible range (and universe range) and will be discarded.
 */
 
 int main() {
